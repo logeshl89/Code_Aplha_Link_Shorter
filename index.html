@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Link Shortener</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    
+    }
+    body {
+            background-image: url("Background.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+    .container {
+        display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+    }    .input-field {
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0069d9;
+      border-color: #0062cc;
+    }
+
+    .shortened-url {
+      margin-top: 20px;
+      font-weight: bold;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .login-form {
+        
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 400px;
+        }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="login-form">
+    <h2 class="text-center mb-4">Link Shortener</h2>
+    <div class="input-field">
+      <label for="longUrl">Long URL:</label>
+      <input type="text" id="longUrl" class="form-control" />
+    </div>
+    <button onclick="shortenUrl()" class="btn btn-primary btn-block">Shorten</button>
+    <div class="shortened-url" id="shortenedUrl"></div>
+  </div>
+  </div>
+
+
+  <script>
+    function shortenUrl() {
+      var longUrlInput = document.getElementById("longUrl");
+      var shortenedUrlLabel = document.getElementById("shortenedUrl");
+
+      var longUrl = longUrlInput.value;
+      var apiKey = "2310ed6d7550cc5f1f5241363ed2589d72af2526";
+      var apiUrl = "https://api-ssl.bitly.com/v4/shorten";
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", apiUrl, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var response = JSON.parse(xhr.responseText);
+          var shortenedUrl = response.link;
+          shortenedUrlLabel.textContent = "Shortened URL: " + shortenedUrl;
+          shortenedUrlLabel.classList.add("text-success");
+
+          // Copy shortened URL to clipboard
+          navigator.clipboard.writeText(shortenedUrl)
+            .then(function() {
+              console.log("Shortened URL copied to clipboard.");
+            })
+            .catch(function(error) {
+              console.error("Failed to copy shortened URL to clipboard: ", error);
+            });
+        }
+      };
+
+      var payload = JSON.stringify({ "long_url": longUrl });
+      xhr.send(payload);
+    }
+  </script>
+</body>
+</html>
